@@ -24,17 +24,15 @@ def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
 #line = linebuf.getvalue()
 #print line
 
-
 def multiCmd(runCmd):
+    cmd = 'adb '+' '.join(sys.argv[1:])
     devices = os.popen("adb devices | sed '1,1d' | sed '$d' | cut -f 1 | sort").read().splitlines()
     #print devices
     devices_number = len(devices);
 
-    #print cmd
-
     if devices_number == 0:
         print 'No emulators or devices detected - nothing to do.'
-    elif devices_number == 1:
+    elif devices_number == 1 and runCmd:
         subprocess.call(cmd.split())
     else:
         devices_model_name=[]
