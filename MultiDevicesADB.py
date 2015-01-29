@@ -4,6 +4,8 @@ import os, sys, StringIO , subprocess
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
+adb = '/Applications/Android-SDK/platform-tools/adb'
+
 def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
     # manually derived from http://en.wikipedia.org/wiki/ANSI_escape_code#Codes
     codes = []
@@ -25,8 +27,8 @@ def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
 #print line
 
 def multiCmd(runCmd):
-    cmd = 'adb '+' '.join(sys.argv[1:])
-    devices = os.popen("adb devices | sed '1,1d' | sed '$d' | cut -f 1 | sort").read().splitlines()
+    cmd = adb + ' ' + ' '.join(sys.argv[1:])
+    devices = os.popen(adb + " devices | sed '1,1d' | sed '$d' | cut -f 1 | sort").read().splitlines()
     #print devices
     devices_number = len(devices);
 
@@ -38,8 +40,8 @@ def multiCmd(runCmd):
         devices_model_name=[]
         devices_versions=[]
         for device in devices:
-            model_name_cmd = 'adb devices | grep '+ device+r' | cut -f 1 | xargs -I $ adb -s $ shell cat /system/build.prop | grep "ro.product.model" | cut -d "=" -f 2 | tr -d '+r'" \r\t\n"'
-            platform_versions_cmd = 'adb devices | grep '+ device + r' | cut -f 1 | xargs -I $ adb -s $ shell cat /system/build.prop | grep "ro.build.version.release" | cut -d "=" -f 2 | tr -d ' + r'"\r\t\n"'
+            model_name_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.product.model" | cut -d "=" -f 2 | tr -d '+r'" \r\t\n"'
+            platform_versions_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.build.version.release" | cut -d "=" -f 2 | tr -d ' + r'"\r\t\n"'
             devices_model_name.append(os.popen(model_name_cmd).read())
             devices_versions.append(os.popen(platform_versions_cmd).read())
         #print devices_model_name
@@ -64,14 +66,14 @@ def multiCmd(runCmd):
             #print user_input
             if user_input.isdigit() and 0< int(user_input) <= len(devices):
                 print "executing following command:"
-                cmd = "adb -s " + devices[int(user_input)-1] +' '+ ' '.join(sys.argv[1:])
+                cmd = adb + " -s " + devices[int(user_input)-1] +' '+ ' '.join(sys.argv[1:])
                 print "    "+cmd+"\n"
                 subprocess.call(cmd.split())
             else:
                 print 'You must enter a vaild number'
 
 
-cmd = 'adb '+' '.join(sys.argv[1:])
+cmd =  adb + ' ' +' '.join(sys.argv[1:])
 
 NO_MULTI_COMMAND=['start-server','kill-server','forward','connect','disconnect','help','version','ppp']
 try:
