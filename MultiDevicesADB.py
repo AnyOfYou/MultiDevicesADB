@@ -25,11 +25,22 @@ def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
 #linebuf.write("%s%s%s " % (format(fg=YELLOW,bg=RED, bright=True), "Test", format(reset=True)))
 #line = linebuf.getvalue()
 #print line
+FAILURE_STATUS=['offline','unauthorized']
 
 def multiCmd(runCmd):
     cmd = adb + ' ' + ' '.join(sys.argv[1:])
-    devices = os.popen(adb + " devices | sed '1,1d' | sed '$d' | cut -f 1 | sort").read().splitlines()
-    #print devices
+    # adb get-serialno
+    devices = os.popen(adb + " devices | sed '1,1d' | sed '$d' | cut -f 1").read().splitlines()
+    # print devices
+    for device in devices[:]:
+        if device.startswith('*') and device.endswith('*'):
+            print device
+            devices.remove(device)
+    # adb get-state
+    devices_status = os.popen(adb + " devices | sed '1,1d' | sed '$d' | cut -f 2").read().splitlines()
+
+    # print devices
+    # print devices_status
     devices_number = len(devices);
 
     if devices_number == 0:
@@ -39,11 +50,17 @@ def multiCmd(runCmd):
     else:
         devices_model_name=[]
         devices_versions=[]
+        fornum = 0
         for device in devices:
-            model_name_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.product.model" | cut -d "=" -f 2 | tr -d '+r'" \r\t\n"'
-            platform_versions_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.build.version.release" | cut -d "=" -f 2 | tr -d ' + r'"\r\t\n"'
-            devices_model_name.append(os.popen(model_name_cmd).read())
-            devices_versions.append(os.popen(platform_versions_cmd).read())
+            if FAILURE_STATUS.count(devices_status[fornum]) == 0:
+                model_name_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.product.model" | cut -d "=" -f 2 | tr -d '+r'" \r\t\n"'
+                platform_versions_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.build.version.release" | cut -d "=" -f 2 | tr -d ' + r'"\r\t\n"'
+                devices_model_name.append(os.popen(model_name_cmd).read())
+                devices_versions.append(os.popen(platform_versions_cmd).read())
+            else:
+                devices_model_name.append(devices_status[fornum])
+                devices_versions.append(devices_status[fornum])
+            fornum = fornum + 1
         #print devices_model_name
         #print devices_versions
         if runCmd:
@@ -54,8 +71,8 @@ def multiCmd(runCmd):
         for device in devices:
             linebuf = StringIO.StringIO()
             linebuf.write("%s%s%s " % (format(fg=BLACK,bg=BLACK,bright=True), str(num).strip().center(3), format(reset=True)))
-            linebuf.write("%s%s%s " % (format(fg=YELLOW,bright=True), device.strip()[:16].ljust(16), format(reset=True)))
-            linebuf.write("%s%s%s " % (format(fg=CYAN,bright=True), devices_versions[num-1].strip().center(7), format(reset=True)))
+            linebuf.write("%s%s%s " % (format(fg=YELLOW,bright=True), device.strip()[:20].ljust(20), format(reset=True)))
+            linebuf.write("%s%s%s " % (format(fg=CYAN,bright=True), devices_versions[num-1].strip().center(16), format(reset=True)))
             linebuf.write("%s%s%s " % (format(fg=MAGENTA,bright=True), devices_model_name[num-1].strip().ljust(20), format(reset=True)))
             line = linebuf.getvalue()
             print line
