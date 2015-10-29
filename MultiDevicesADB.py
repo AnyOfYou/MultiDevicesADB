@@ -92,7 +92,7 @@ def multiCmd(runCmd):
 
 cmd =  adb + ' ' +' '.join(sys.argv[1:])
 
-NO_MULTI_COMMAND=['start-server','kill-server','forward','connect','disconnect','help','version','ppp']
+NO_MULTI_COMMAND=['start-server','kill-server','connect','disconnect','help','version','ppp']
 try:
     first_args = sys.argv[1]
     if first_args == 'devices':
