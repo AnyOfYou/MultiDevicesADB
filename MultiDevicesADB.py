@@ -102,6 +102,8 @@ try:
             subprocess.call(cmd.split())
         else:
             multiCmd(True)
+except KeyboardInterrupt:
+    pass
 except:
     #print 'No args'
     multiCmd(False)
