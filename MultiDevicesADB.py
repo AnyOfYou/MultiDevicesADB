@@ -105,5 +105,5 @@ try:
 except KeyboardInterrupt:
     pass
 except:
-    #print 'No args'
-    multiCmd(False)
+    # multiCmd(False)
+    subprocess.call(cmd.split())
