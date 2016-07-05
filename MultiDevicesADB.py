@@ -1,11 +1,15 @@
-# written by Dary
+# written by Lucas
 
 import os, sys, StringIO, subprocess
+from termcolor import colored, cprint
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 adb = '/Applications/Android-SDK/platform-tools/adb'
 
+FAILURE_STATUS = ['offline', 'unauthorized']
+
+NO_MULTI_COMMAND = ['start-server', 'kill-server', 'connect', 'disconnect', 'help', 'version', 'ppp', 'root', 'unroot', 'usb', 'tcpip']
 
 def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
     # manually derived from http://en.wikipedia.org/wiki/ANSI_escape_code#Codes
@@ -27,10 +31,6 @@ def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
         else:
             codes.append("22")
     return "\033[%sm" % (";".join(codes))
-
-
-FAILURE_STATUS = ['offline', 'unauthorized']
-
 
 def multi_cmd(run_cmd):
     cmd = adb + ' ' + ' '.join(sys.argv[1:])
@@ -92,22 +92,28 @@ def multi_cmd(run_cmd):
             # print user_input
             if user_input.isdigit() and 0 < int(user_input) <= len(devices):
                 print "executing following command:"
+                linebuf = StringIO.StringIO()
                 cmd = adb + " -s " + devices[int(user_input) - 1] + ' ' + ' '.join(sys.argv[1:])
-                print "    " + cmd + "\n"
+                # print cmd + "\n"
+                # linebuf.write(adb)
+                linebuf.write("%s%s%s " % (format(fg=BLACK, bg=BLACK, bright=True), adb, format(reset=True)))
+                linebuf.write("%s%s%s " % (format(fg=YELLOW), " -s " + devices[int(user_input) - 1] + ' ', format(reset=True)))
+                linebuf.write("%s%s%s " % (format(fg=GREEN), ' '.join(sys.argv[1:]), format(reset=True)))
+                line = linebuf.getvalue()
+                print line
+                print
                 subprocess.call(cmd.split())
             else:
                 print 'You must enter a valid number'
 
-
 cmd = adb + ' ' + ' '.join(sys.argv[1:])
 
-NO_MULTI_COMMAND = ['start-server', 'kill-server', 'connect', 'disconnect', 'help', 'version', 'ppp']
 try:
     first_args = sys.argv[1]
     if first_args == 'devices':
         multi_cmd(False)
     else:
-        if NO_MULTI_COMMAND.count(first_args) == 1:
+        if NO_MULTI_COMMAND.count(first_args) == 1 or first_args == '-s':
             subprocess.call(cmd.split())
         else:
             multi_cmd(True)
