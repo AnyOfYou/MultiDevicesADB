@@ -2,6 +2,7 @@
 
 import os, sys, StringIO, subprocess
 from termcolor import colored, cprint
+# import shlex
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
@@ -33,7 +34,6 @@ def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
     return "\033[%sm" % (";".join(codes))
 
 def multi_cmd(run_cmd):
-    cmd = adb + ' ' + ' '.join(sys.argv[1:])
     # adb get serial no
     devices = os.popen(adb + " devices | sed '1,1d' | sed '$d' | cut -f 1").read().splitlines()
     # print devices
@@ -51,7 +51,7 @@ def multi_cmd(run_cmd):
     if devices_number == 0:
         print 'No emulators or devices detected - nothing to do.'
     elif devices_number == 1 and run_cmd:
-        subprocess.call(cmd.split())
+        subprocess.call(cmd)
     else:
         devices_model_name = []
         devices_versions = []
@@ -102,11 +102,11 @@ def multi_cmd(run_cmd):
                 line = linebuf.getvalue()
                 print line
                 print
-                subprocess.call(cmd.split())
+                subprocess.call(cmd)
             else:
                 print 'You must enter a valid number'
 
-cmd = adb + ' ' + ' '.join(sys.argv[1:])
+cmd = [adb] + sys.argv[1:]
 
 try:
     first_args = sys.argv[1]
@@ -114,11 +114,11 @@ try:
         multi_cmd(False)
     else:
         if NO_MULTI_COMMAND.count(first_args) == 1 or first_args == '-s':
-            subprocess.call(cmd.split())
+            subprocess.call(cmd)
         else:
             multi_cmd(True)
 except KeyboardInterrupt:
     pass
 except:
     # multi_cmd(False)
-    subprocess.call(cmd.split())
+    subprocess.call(cmd)
