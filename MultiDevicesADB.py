@@ -58,8 +58,10 @@ def multi_cmd(run_cmd):
         fornum = 0
         for device in devices:
             if FAILURE_STATUS.count(devices_status[fornum]) == 0:
-                model_name_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.product.model" | cut -d "=" -f 2 | tr -d ' + r'" \r\t\n"'
-                platform_versions_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.build.version.release" | cut -d "=" -f 2 | tr -d ' + r'"\r\t\n"'
+                # model_name_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.product.model" | cut -d "=" -f 2 | tr -d ' + r'" \r\t\n"'
+                model_name_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell getprop ro.product.model'
+                # platform_versions_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell cat /system/build.prop | grep "ro.build.version.release" | cut -d "=" -f 2 | tr -d ' + r'"\r\t\n"'
+                platform_versions_cmd = adb + ' devices | grep ' + device + r' | cut -f 1 | xargs -I $ ' + adb + ' -s $ shell getprop ro.build.version.release'
                 devices_model_name.append(os.popen(model_name_cmd).read())
                 devices_versions.append(os.popen(platform_versions_cmd).read())
             else:
