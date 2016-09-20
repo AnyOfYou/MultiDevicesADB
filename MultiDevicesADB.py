@@ -99,7 +99,7 @@ def multi_cmd(run_cmd):
                 # print cmd + "\n"
                 # linebuf.write(adb)
                 linebuf.write("%s%s%s " % (format(fg=BLACK, bg=BLACK, bright=True), adb, format(reset=True)))
-                linebuf.write("%s%s%s " % (format(fg=YELLOW), " -s " + devices[int(user_input) - 1] + ' ', format(reset=True)))
+                linebuf.write("%s%s%s " % (format(fg=YELLOW), "-s " + devices[int(user_input) - 1], format(reset=True)))
                 linebuf.write("%s%s%s " % (format(fg=GREEN), ' '.join(sys.argv[1:]), format(reset=True)))
                 line = linebuf.getvalue()
                 print line
