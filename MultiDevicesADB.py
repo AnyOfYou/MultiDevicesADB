@@ -104,7 +104,7 @@ def multi_cmd(run_cmd):
                 line = linebuf.getvalue()
                 print line
                 print
-                subprocess.call(cmd)
+                subprocess.call(cmd.split())
             else:
                 print 'You must enter a valid number'
 
