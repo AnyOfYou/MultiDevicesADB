@@ -89,6 +89,7 @@ def multi_cmd(run_cmd):
             print line
             # print str(num)+": " + device + "\t\t" + devices_versions[num-1] + "\t\t"+ devices_model_name[num-1]
             num += 1
+        sys.stdout.flush()
         if run_cmd:
             user_input = raw_input("> ")
             # print user_input
