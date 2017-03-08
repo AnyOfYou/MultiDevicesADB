@@ -6,7 +6,7 @@ from termcolor import colored, cprint
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
-adb = '/Applications/Android-SDK/platform-tools/adb'
+adb = os.environ['ANDROID_HOME'] + '/platform-tools/adb'
 
 FAILURE_STATUS = ['offline', 'unauthorized']
 
