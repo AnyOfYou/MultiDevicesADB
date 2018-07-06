@@ -124,4 +124,7 @@ except KeyboardInterrupt:
     pass
 except:
     # multi_cmd(False)
-    subprocess.call(cmd)
+    try:
+        subprocess.call(cmd)
+    except KeyboardInterrupt:
+        pass
