@@ -15,7 +15,7 @@ adb = os.environ['ANDROID_HOME'] + '/platform-tools/adb'
 FAILURE_STATUS = ['offline', 'unauthorized']
 
 NO_MULTI_COMMAND = ['start-server', 'kill-server', 'connect', 'disconnect', 'help', 'version', 'ppp', 'root', 'unroot',
-                    'usb', 'tcpip']
+                    'usb', 'tcpip', 'pair']
 
 
 def format(fg=None, bg=None, bright=False, bold=False, dim=False, reset=False):
